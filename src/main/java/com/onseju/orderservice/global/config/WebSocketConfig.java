@@ -12,8 +12,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
 	@Override
 	public void configureMessageBroker(MessageBrokerRegistry config) {
-		// 구독 주제(subscribe)는 "/topic"으로 시작
-		config.enableSimpleBroker("/topic");
+		// 하트비트 설정 (60초 간격)
+		config.enableSimpleBroker("/topic")
+				.setHeartbeatValue(new long[]{60000, 60000});
+
 		// 클라이언트에서 보내는 메시지 주제는 "/app"으로 시작
 		config.setApplicationDestinationPrefixes("/app");
 	}
@@ -25,6 +27,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 						"http://onseju.store",
 						"https://onseju.vercel.app",
 						"http://localhost:3000")  // React 앱의 주소
-				.withSockJS();  // SockJS 지원 추가
+				.withSockJS()  // SockJS 지원 추가
+				// SockJS 재연결 설정 추가
+                .setDisconnectDelay(30 * 1000)  // 30초
+				.setClientLibraryUrl("https://cdn.jsdelivr.net/npm/sockjs-client@1.5.0/dist/sockjs.min.js");
 	}
 }
